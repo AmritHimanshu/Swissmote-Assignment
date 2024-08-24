@@ -9,10 +9,11 @@ export default function Home() {
   const [betAmount, setBetAmount] = useState('');
   const [contract, setContract] = useState(null);
 
-  // Contract ABI and address  (replace with your actual contract details)
+  // Contract ABI and address (replace with your actual contract details)
   const contractABI = [
     // Your contract ABI goes here
   ];
+
   const contractAddress = 'YOUR_DEPLOYED_CONTRACT_ADDRESS';
 
   // Connect to Ethereum wallet (Metamask)
