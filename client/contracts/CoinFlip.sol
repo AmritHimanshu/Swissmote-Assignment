@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 contract CoinFlip {
     address public owner;
@@ -11,8 +11,8 @@ contract CoinFlip {
     function flipCoin(bool _guess) public payable returns (bool) {
         require(msg.value > 0, "Bet amount must be greater than 0");
         // Generate a pseudo-random number
-        bool coinFlipResult = (block.timestamp + block.difficulty) % 2 == 0;
-        
+        bool coinFlipResult = (block.timestamp + block.prevrandao) % 2 == 0;
+
         if (coinFlipResult == _guess) {
             payable(msg.sender).transfer(msg.value * 2); // User wins
             return true;
