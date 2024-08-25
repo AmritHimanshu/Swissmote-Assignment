@@ -20,7 +20,7 @@ export default function Home() {
   }, []);
 
   // Replace with your deployed contract address
-  const contractAddress = "0x637221741A6006bC0bD72409baB4e33604605D0e";
+  const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
   // Replace with your ABI
   const contractABI = [
