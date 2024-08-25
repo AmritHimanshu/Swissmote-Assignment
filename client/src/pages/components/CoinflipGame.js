@@ -19,7 +19,7 @@ export default function Home() {
   }, []);
 
   // Replace with your deployed contract address
-  const contractAddress = "0x4506FeC26355388Cf94200A0Cf742E8e83f71f1e";
+  const contractAddress = "0x637221741A6006bC0bD72409baB4e33604605D0e";
 
   // Replace with your ABI
   const contractABI = [

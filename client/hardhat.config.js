@@ -6,7 +6,7 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: "0.8.0", // For CoinFlip.sol
+        version: "0.8.24", // For CoinFlip.sol
       },
       {
         version: "0.8.24", // For Lock.sol or any other contract
