@@ -18,7 +18,4 @@ async function main() {
   main().catch((error) => {
     console.error(error);
     process.exitCode = 1;
-  });
-
-//   address: 0x83910C4DAAA9537578277d5cd7E717875cD18437
-  
+  });  
