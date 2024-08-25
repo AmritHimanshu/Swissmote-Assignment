@@ -19,12 +19,9 @@ export default function Home() {
     }
   }, []);
 
-  // Replace with your deployed contract address
   const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
 
-  // Replace with your ABI
   const contractABI = [
-    // Your contract's ABI goes here
     {
       inputs: [],
       stateMutability: "nonpayable",
@@ -102,14 +99,12 @@ export default function Home() {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
 
-      // Load the contract
       const contract = new ethers.Contract(
         contractAddress,
         contractABI,
         signer
       );
 
-      // Call the flipCoin function on the contract
       const transaction = await contract.flipCoin(selectedSide === "heads", {
         value: ethers.parseEther(betAmount),
       });
@@ -119,7 +114,6 @@ export default function Home() {
 
       // console.log("Mined -- ", transaction.hash);
 
-      // Check the outcome (for now, just console log it)
       const receipt = await provider.getTransactionReceipt(transaction.hash);
       if (receipt.status === 1) {
         // console.log("You won!");
