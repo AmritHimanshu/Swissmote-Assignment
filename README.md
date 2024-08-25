@@ -22,5 +22,3 @@ This project is a decentralized coin flip game built on the Ethereum blockchain.
 
 The smart contract is written in Solidity and deployed on the Sepolia testnet. It includes a function `flipCoin()` that takes the user's guess (heads or tails) and returns whether the user won or lost based on a pseudo-random number.
 
-### Contract Address
-
