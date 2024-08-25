@@ -114,18 +114,18 @@ export default function Home() {
         value: ethers.parseEther(betAmount),
       });
 
-      console.log("Mining...", transaction.hash);
+      // console.log("Mining...", transaction.hash);
       await transaction.wait();
 
-      console.log("Mined -- ", transaction.hash);
+      // console.log("Mined -- ", transaction.hash);
 
       // Check the outcome (for now, just console log it)
       const receipt = await provider.getTransactionReceipt(transaction.hash);
       if (receipt.status === 1) {
-        console.log("You won!");
+        // console.log("You won!");
         setError("You won!");
       } else {
-        console.log("You lost!");
+        // console.log("You lost!");
         setError("You lost!");
       }
     } catch (err) {
