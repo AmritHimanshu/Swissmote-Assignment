@@ -1,55 +1,133 @@
-import { useState } from 'react';
-import { ethers } from 'ethers';
-import Head from 'next/head';
+import { useEffect, useState } from "react";
+import { ethers } from "ethers";
+import Head from "next/head";
 
 export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false);
   const [error, setError] = useState(null);
   const [selectedSide, setSelectedSide] = useState(null);
-  const [betAmount, setBetAmount] = useState('');
+  const [betAmount, setBetAmount] = useState("");
   const [contract, setContract] = useState(null);
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
 
-  // Contract ABI and address (replace with your actual contract details)
+  useEffect(() => {
+    if (typeof window.ethereum !== "undefined") {
+      const newProvider = new ethers.BrowserProvider(window.ethereum);
+      setProvider(newProvider);
+    }
+  }, []);
+
+  // Replace with your deployed contract address
+  const contractAddress = "0x83910C4DAAA9537578277d5cd7E717875cD18437";
+
+  // Replace with your ABI
   const contractABI = [
-    // Your contract ABI goes here
+    // Your contract's ABI goes here
+    {
+      inputs: [],
+      stateMutability: "nonpayable",
+      type: "constructor",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bool",
+          name: "_guess",
+          type: "bool",
+        },
+      ],
+      name: "flipCoin",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+      ],
+      stateMutability: "payable",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "owner",
+      outputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
   ];
-
-  const contractAddress = 'YOUR_DEPLOYED_CONTRACT_ADDRESS';
 
   // Connect to Ethereum wallet (Metamask)
   const connectWallet = async () => {
-    if (typeof window.ethereum !== 'undefined') {
-      try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        const signer = provider.getSigner();
-        const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
-        setContract(contractInstance);
-        setWalletConnected(true);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to connect wallet');
-      }
-    } else {
-      setError('Ethereum wallet not detected');
+    try {
+      await provider.send("eth_requestAccounts", []);
+      const newSigner = await provider.getSigner();
+      setSigner(newSigner);
+      setWalletConnected(true);
+
+      const newContract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        newSigner
+      );
+      setContract(newContract);
+    } catch (err) {
+      console.error("Failed to connect wallet:", err);
     }
   };
 
   // Flip the coin
   const flipCoin = async () => {
-    // console.log(selectedSide, betAmount, contract);
     if (!selectedSide || !betAmount || !contract) {
-      setError('Please select a side and enter a bet amount');
+      setError("Please select a side and enter a bet amount");
       return;
     }
-    
+
     try {
-      const tx = await contract.flip(selectedSide, ethers.utils.parseEther(betAmount));
-      await tx.wait();
-      alert('Coin flipped successfully');
+      const { ethereum } = window;
+      if (!ethereum) {
+        alert("Get MetaMask!");
+        return;
+      }
+
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+
+      // Load the contract
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
+
+      // Call the flipCoin function on the contract
+      const transaction = await contract.flipCoin(selectedSide === "heads", {
+        value: ethers.parseEther(betAmount),
+      });
+
+      console.log("Mining...", transaction.hash);
+      await transaction.wait();
+
+      console.log("Mined -- ", transaction.hash);
+
+      // Check the outcome (for now, just console log it)
+      const receipt = await provider.getTransactionReceipt(transaction.hash);
+      if (receipt.status === 1) {
+        console.log("You won!");
+        setError("You won!");
+      } else {
+        console.log("You lost!");
+        setError("You lost!");
+      }
     } catch (err) {
       console.error(err);
-      setError('Error flipping the coin');
+      setError("Transaction failed");
     }
   };
 
@@ -62,10 +140,12 @@ export default function Home() {
       </Head>
 
       <main className="w-full max-w-md p-8 bg-gray-800 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center mb-8">Welcome to the Coinflip Game</h1>
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Welcome to the Coinflip Game
+        </h1>
 
         {!walletConnected ? (
-          <button 
+          <button
             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             onClick={connectWallet}
           >
@@ -78,17 +158,21 @@ export default function Home() {
               <div className="flex space-x-4">
                 <button
                   className={`w-1/2 py-2 px-4 rounded font-bold ${
-                    selectedSide === 'heads' ? 'bg-green-500' : 'bg-gray-700 hover:bg-gray-600'
+                    selectedSide === "heads"
+                      ? "bg-green-500"
+                      : "bg-gray-700 hover:bg-gray-600"
                   }`}
-                  onClick={() => setSelectedSide('heads')}
+                  onClick={() => setSelectedSide("heads")}
                 >
                   Heads
                 </button>
                 <button
                   className={`w-1/2 py-2 px-4 rounded font-bold ${
-                    selectedSide === 'tails' ? 'bg-green-500' : 'bg-gray-700 hover:bg-gray-600'
+                    selectedSide === "tails"
+                      ? "bg-green-500"
+                      : "bg-gray-700 hover:bg-gray-600"
                   }`}
-                  onClick={() => setSelectedSide('tails')}
+                  onClick={() => setSelectedSide("tails")}
                 >
                   Tails
                 </button>
@@ -105,13 +189,12 @@ export default function Home() {
               />
             </div>
 
-            <button 
+            <button
               className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               onClick={flipCoin}
             >
               Flip Coin
             </button>
-
           </>
         )}
         {error && <p className="text-red-500 mt-4">{error}</p>}
