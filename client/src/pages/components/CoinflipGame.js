@@ -82,6 +82,7 @@ export default function Home() {
 
   // Flip the coin
   const flipCoin = async () => {
+    setError(null);
     if (!selectedSide || !betAmount || !contract) {
       setError("Please select a side and enter a bet amount");
       return;
