@@ -77,6 +77,7 @@ export default function Home() {
       setContract(newContract);
     } catch (err) {
       console.error("Failed to connect wallet:", err);
+      setError("Failed to connect wallet:", err);
     }
   };
 
