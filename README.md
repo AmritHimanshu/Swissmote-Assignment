@@ -1,3 +1,5 @@
+### https://swissmote-assignment-nine.vercel.app/
+
 # Coin Flip Game
 
 This project is a decentralized coin flip game built on the Ethereum blockchain. Users can connect their wallets, place bets, and flip a coin. If the user guesses the coin flip correctly, they win double their bet amount.
